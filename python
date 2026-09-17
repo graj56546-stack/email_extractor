@@ -1,0 +1,71 @@
+import os
+import re
+
+EMAIL_PATTERN = re.compile(r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}")
+
+
+def create_sample_file(filename="sample_input.txt"):
+    """Create a sample input file so the script can be tested immediately."""
+    sample_text = """Hi team,
+
+    Please reach out to john.doe@example.com or sales@codealpha.tech
+    for more information. You can also contact support_team123@my-company.co
+    or cc jane_smith@university.edu.in for academic queries.
+
+    Invalid entries like not-an-email or missing@dotcom should be ignored
+    unless they match a valid pattern.
+
+    Regards,
+    Admin (admin@sample-domain.org)
+    """
+    with open(filename, "w") as f:
+        f.write(sample_text)
+    print(f"Sample input file created: '{filename}'")
+    return filename
+
+
+def extract_emails(input_file):
+    if not os.path.exists(input_file):
+        print(f"Error: '{input_file}' not found.")
+        return []
+
+    with open(input_file, "r") as f:
+        content = f.read()
+
+    emails = EMAIL_PATTERN.findall(content)
+    unique_emails = sorted(set(emails))
+    return unique_emails
+
+
+def save_emails(emails, output_file="extracted_emails.txt"):
+    with open(output_file, "w") as f:
+        for email in emails:
+            f.write(email + "\n")
+    print(f"Extracted {len(emails)} email(s) saved to '{output_file}'")
+
+
+def main():
+    print("Email Extractor - Task Automation\n")
+
+    choice = input(
+        "Enter path to a .txt file, or press Enter to use a generated sample file: "
+    ).strip()
+
+    if choice == "":
+        input_file = create_sample_file()
+    else:
+        input_file = choice
+
+    emails = extract_emails(input_file)
+
+    if emails:
+        print("\nEmails found:")
+        for email in emails:
+            print(f"  - {email}")
+        save_emails(emails)
+    else:
+        print("No email addresses found.")
+
+
+if __name__ == "__main__":
+    main()
